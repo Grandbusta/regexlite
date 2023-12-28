@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"reflect"
 	"regexp"
 )
 
@@ -17,22 +18,30 @@ type lengthData struct {
 	errorText string
 }
 
-type data struct {
-	value         string
+type AnyType interface {
+	string | int | uint
+}
+
+type data[K AnyType] struct {
+	Value         K
 	regexparts    []regexPart
 	minLengthData lengthData
 	maxLengthData lengthData
+}
+
+func (d *data[K]) String() string {
+	return reflect.ValueOf(d.Value).String()
 }
 
 func getRegexPart(regex string, errorText string) regexPart {
 	return regexPart{errorText: errorText, regex: regex}
 }
 
-func Value(value string) *data {
-	return &data{value: value}
+func Value[K AnyType](value K) *data[K] {
+	return &data[K]{Value: value}
 }
 
-func (d *data) HasText() *data {
+func (d *data[K]) HasText() *data[K] {
 	d.regexparts = append(
 		d.regexparts,
 		getRegexPart(".*[A-Za-z]+.*", "text not present in value"),
@@ -40,7 +49,7 @@ func (d *data) HasText() *data {
 	return d
 }
 
-func (d *data) HasNumbers() *data {
+func (d *data[K]) HasNumbers() *data[K] {
 	d.regexparts = append(
 		d.regexparts,
 		getRegexPart(".*[0-9]", "number not present in value"),
@@ -48,18 +57,18 @@ func (d *data) HasNumbers() *data {
 	return d
 }
 
-func (d *data) HasSpecialCharacter() *data {
+func (d *data[K]) HasSpecialCharacter() *data[K] {
 	d.regexparts = append(
 		d.regexparts,
 		getRegexPart(".*[!@#$%^&*]", "special character not present in value"),
 	)
 	return d
 }
-func (d *data) HasUpperCase() *data {
+func (d *data[K]) HasUpperCase() *data[K] {
 	d.regexparts = append(d.regexparts, getRegexPart(".*[A-Z]", "uppercase not present in value"))
 	return d
 }
-func (d *data) HasLowerCase() *data {
+func (d *data[K]) HasLowerCase() *data[K] {
 	d.regexparts = append(
 		d.regexparts,
 		getRegexPart(".*[a-z]", "lower case not present in value"),
@@ -67,7 +76,7 @@ func (d *data) HasLowerCase() *data {
 	return d
 }
 
-func (d *data) IsEmail() *data {
+func (d *data[K]) IsEmail() *data[K] {
 	d.regexparts = append(
 		d.regexparts,
 		getRegexPart("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", "invalid email"),
@@ -75,7 +84,7 @@ func (d *data) IsEmail() *data {
 	return d
 }
 
-func (d *data) IsUrl() *data {
+func (d *data[K]) IsUrl() *data[K] {
 	d.regexparts = append(
 		d.regexparts,
 		getRegexPart("^(https?|ftp):\\/\\/[^\\s/$.?#].[^\\s]*$", "invalid Url"),
@@ -83,7 +92,7 @@ func (d *data) IsUrl() *data {
 	return d
 }
 
-func (d *data) Contains(substring string) *data {
+func (d *data[K]) Contains(substring string) *data[K] {
 	d.regexparts = append(
 		d.regexparts,
 		getRegexPart(fmt.Sprintf(".*%v", substring), fmt.Sprintf("substring '%v' not present in value", substring)),
@@ -91,7 +100,7 @@ func (d *data) Contains(substring string) *data {
 	return d
 }
 
-func (d *data) Min(length int) *data {
+func (d *data[K]) Min(length int) *data[K] {
 	d.minLengthData = lengthData{
 		length:    length,
 		errorText: fmt.Sprintf("value should have a minimum of %v characters", length),
@@ -99,7 +108,7 @@ func (d *data) Min(length int) *data {
 	return d
 }
 
-func (d *data) Max(length int) *data {
+func (d *data[K]) Max(length int) *data[K] {
 	d.maxLengthData = lengthData{
 		length:    length,
 		errorText: fmt.Sprintf("value should have a maximum of %v characters", length),
@@ -107,14 +116,16 @@ func (d *data) Max(length int) *data {
 	return d
 }
 
-func (d *data) Validate() (valid bool, err error) {
+func (d *data[K]) Validate() (valid bool, err error) {
+	strValue := d.String()
+
 	if d.minLengthData.length != 0 {
-		if len(d.value) < d.minLengthData.length {
+		if len(strValue) < d.minLengthData.length {
 			return false, errors.New(d.minLengthData.errorText)
 		}
 	}
 	if d.maxLengthData.length != 0 {
-		if len(d.value) > d.maxLengthData.length {
+		if len(strValue) > d.maxLengthData.length {
 			return false, errors.New(d.maxLengthData.errorText)
 		}
 	}
@@ -122,8 +133,9 @@ func (d *data) Validate() (valid bool, err error) {
 		r, err := regexp.Compile(regexpart.regex)
 		if err != nil {
 			log.Fatal(err)
+
 		}
-		if !r.MatchString(d.value) {
+		if !r.MatchString(strValue) {
 			return false, errors.New(regexpart.errorText)
 		}
 	}
