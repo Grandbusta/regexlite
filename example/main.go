@@ -1,7 +1,12 @@
 package main
 
-import "github.com/Grandbusta/regexlite"
+import (
+	"fmt"
+
+	"github.com/Grandbusta/regexlite"
+)
 
 func main() {
-	regexlite.Hello()
+	res := regexlite.Value("://g.com").Contains("x").Validate()
+	fmt.Println(res)
 }
