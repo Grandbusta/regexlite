@@ -2,8 +2,8 @@ package regexlite
 
 import "errors"
 
-func ValidateNumber[T number](n T) nWrapper[T] {
-	return nWrapper[T]{value: n}
+func ValidateNumber[T number](n T) *nWrapper[T] {
+	return &nWrapper[T]{value: n}
 }
 
 func (w *nWrapper[T]) Min(n T) *nWrapper[T] {
