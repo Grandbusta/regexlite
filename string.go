@@ -59,6 +59,69 @@ func (w *sWrapper) IsURL() *sWrapper {
 	return w
 }
 
+// Checks whether string contains at least one number.
+func (w *sWrapper) HasNumber() *sWrapper {
+	var hn bool
+	for itx := range w.value {
+		if w.value[itx] >= '0' && w.value[itx] <= '9' {
+			hn = true
+			break
+		}
+	}
+
+	if !hn {
+		if w.err == nil {
+			w.err = ErrNoNumber
+		} else {
+			w.err = errors.Join(w.err, ErrNoNumber)
+		}
+	}
+
+	return w
+}
+
+// Checks whether string contains at least one uppercase character.
+func (w *sWrapper) HasUpperCase() *sWrapper {
+	var hn bool
+	for itx := range w.value {
+		if w.value[itx] >= 'A' && w.value[itx] <= 'Z' {
+			hn = true
+			break
+		}
+	}
+
+	if !hn {
+		if w.err == nil {
+			w.err = ErrNoUppercase
+		} else {
+			w.err = errors.Join(w.err, ErrNoUppercase)
+		}
+	}
+
+	return w
+}
+
+// Checks whether string contains at least one lowercase character.
+func (w *sWrapper) HasLowerCase() *sWrapper {
+	var hn bool
+	for itx := range w.value {
+		if w.value[itx] >= 'a' && w.value[itx] <= 'z' {
+			hn = true
+			break
+		}
+	}
+
+	if !hn {
+		if w.err == nil {
+			w.err = ErrNoLowercase
+		} else {
+			w.err = errors.Join(w.err, ErrNoLowercase)
+		}
+	}
+
+	return w
+}
+
 // Returns an error with explanation if checked value did not pass requirements.
 func (w *sWrapper) Check() error {
 	return w.err
