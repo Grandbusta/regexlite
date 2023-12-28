@@ -50,6 +50,10 @@ func main() {
 If you have a suggestion that would make this project better, please fork the repo and create a pull request.
 Don't forget to give the project a star! Thanks again!
 
+## 🤓 Author(s)
+
+**Olaifa Boluwatife Jonathan** [![Twitter Follow](https://img.shields.io/twitter/follow/iamgrandbusta?style=social)](https://twitter.com/iamgrandbusta)
+
 ## 🔖 License
 
 Distributed under the MIT License. See `LICENSE` for more information.
