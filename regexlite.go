@@ -43,7 +43,7 @@ func (d *data) HasText() *data {
 func (d *data) HasNumbers() *data {
 	d.regexparts = append(
 		d.regexparts,
-		getRegexPart(".*[0-9]", "number not present in value"),
+		getRegexPart(".*[0-9].*", "number not present in value"),
 	)
 	return d
 }
@@ -51,7 +51,7 @@ func (d *data) HasNumbers() *data {
 func (d *data) HasSpecialCharacter() *data {
 	d.regexparts = append(
 		d.regexparts,
-		getRegexPart(".*[!@#$%^&*]", "special character not present in value"),
+		getRegexPart(".*[!@#$%^&*].*", "special character not present in value"),
 	)
 	return d
 }
@@ -62,7 +62,7 @@ func (d *data) HasUpperCase() *data {
 func (d *data) HasLowerCase() *data {
 	d.regexparts = append(
 		d.regexparts,
-		getRegexPart(".*[a-z]", "lower case not present in value"),
+		getRegexPart(".*[a-z].*", "lower case not present in value"),
 	)
 	return d
 }
