@@ -36,14 +36,19 @@ func main() {
 }
 ```
 
-## 📮Example Methods
+## 📮Available Methods
 
 - `HasText()`: Ensures the string contains text (a-z, A-Z).
 - `HasNumbers()`: Ensures the string contains numbers.
 - `HasSpecialCharacter()`: Ensures the string contains special characters.
 - `Min(length: int)`: Sets the minimum length of the string.
 - `Max(length: int)`: Sets the maximum length of the string.
-- `Validate()`: Executes the validation and returns a boolean result.
+- `Validate()`: Executes the validation and returns a boolean and error result.
+- `HasUpperCase()`: Ensures string contains at least one uppercase character.
+- `HasLowerCase()`: Ensures string contains at least one lowercase character.
+- `IsEmail()`: Ensures string is a valid email.
+- `IsUrl()`: Ensures string is a valid url.
+- `Contains(substring string)`: Ensures string contains a substring.
 
 ## ➕Contributing
 
