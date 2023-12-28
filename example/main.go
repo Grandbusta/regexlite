@@ -7,6 +7,6 @@ import (
 )
 
 func main() {
-	res := regexlite.Value("://g.com").Contains("x").Validate()
-	fmt.Println(res)
+	isValidPassword, err := regexlite.Value("Thisisapass&").Min(8).Max(30).HasUpperCase().HasSpecialCharacter().Validate()
+	fmt.Println(isValidPassword, err) // returns true or false based on validation. err returns nil or error based on validation
 }
